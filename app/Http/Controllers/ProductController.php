@@ -5,34 +5,28 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Services\ProductService;
 
 class ProductController extends Controller
 {
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function index(Request $request)
     {
-        try {
-            $query = Product::with('category');
-            $activeCategory = null;
-
-            if ($request->has('category')) {
-                $categoryId = $request->query('category');
-                $activeCategory = Category::findOrFail($categoryId);
-                $query->where('category_id', $categoryId);
-            }
-
-            $products = $query->paginate(12)->withQueryString();
-            $categories = Category::withCount('products')->get();
-            
-            if ($products->isEmpty() && $request->has('category')) {
-                return redirect()->route('products')
-                    ->with('info', 'No products found in this category.');
-            }
-
-            return view('products', compact('products', 'categories', 'activeCategory'));
-        } catch (\Exception $e) {
+        $products = $this->productService->getProducts($request);
+        $categories = Category::withCount('products')->get();
+        
+        if ($products->isEmpty() && $request->has('category')) {
             return redirect()->route('products')
-                ->with('error', 'Unable to fetch products. Please try again.');
+                ->with('info', 'No products found in this category.');
         }
+
+        return view('products', compact('products', 'categories', 'activeCategory'));
     }
 
     public function category($id)

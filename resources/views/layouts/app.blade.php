@@ -11,9 +11,6 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Sweet Alert -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -35,20 +32,5 @@
                 {{ $slot }}
             </main>
         </div>
-
-        <!-- Sweet Alert Script -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                @if (session('sweetAlert'))
-                    Swal.fire({
-                        icon: "{{ session('sweetAlert.type') }}",
-                        title: "{{ session('sweetAlert.title') }}",
-                        text: "{{ session('sweetAlert.text') }}",
-                        timer: 3000,
-                        timerProgressBar: true,
-                    });
-                @endif
-            });
-        </script>
     </body>
 </html>
