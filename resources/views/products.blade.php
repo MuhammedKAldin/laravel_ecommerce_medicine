@@ -143,7 +143,8 @@ function addToCart(productId, event, productImage, productElement) {
         method: 'POST',
         data: {
             product_id: productId,
-            quantity: 1
+            quantity: 1,
+            _token: '{{ csrf_token() }}'
         },
         success: function(response) {
             if(response.success) {

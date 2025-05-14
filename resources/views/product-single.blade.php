@@ -68,14 +68,12 @@
 	          	</div>
           	</div>
           	<p>
-			  <button type="button" onclick="addToCart(1, event, 'http://127.0.0.1:8000/storage/products/disposable-face-masks.jpg')" 
+			  <button type="button" 
+			  onclick="addToCart({{ $product->id }}, event, '{{ asset($product->image) }}')" 
 			  class="btn btn-black py-3 px-5 add-to-cart-btn" 
-			  style="
-					background-color: black!important;
-					padding: 15px!important;
-					padding-bottom: 10px!important;
-					padding-top: 10px!important;
-				">Add to Cart</button>
+			  style="background-color: black!important; padding: 15px!important; padding-bottom: 10px!important; padding-top: 10px!important;">
+				Add to Cart
+			  </button>
 			</p>
     		</div>
     	</div>
@@ -194,7 +192,7 @@ function addToCart(productId, event, productImage, productElement = null) {
     }, 0);
 
     // Get quantity if it's the main product
-    const quantity = productElement ? 1 : parseInt($('#quantity').val());
+    const quantity = productElement ? 1 : parseInt($('#quantity').val() || 1);
 
     // Make the AJAX call
     $.ajax({
@@ -202,7 +200,8 @@ function addToCart(productId, event, productImage, productElement = null) {
         method: 'POST',
         data: {
             product_id: productId,
-            quantity: quantity
+            quantity: quantity,
+            _token: '{{ csrf_token() }}'
         },
         success: function(response) {
             if(response.success) {

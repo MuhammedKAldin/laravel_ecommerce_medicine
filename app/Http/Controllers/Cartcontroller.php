@@ -3,73 +3,86 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\CartItem;
+use App\Services\CartService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
+    protected $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->middleware('auth');
+        $this->cartService = $cartService;
+    }
+
     public function cart()
     {
-        $cartItems = session()->get('cart', []);
-        return view('cart', compact('cartItems'));
+        $cartItems = $this->cartService->getCartItems();
+        $total = $this->cartService->getCartTotal();
+        return view('cart', compact('cartItems', 'total'));
     }
 
     public function addToCart(Request $request)
     {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1'
+        ]);
+
         $product = Product::findOrFail($request->product_id);
-        $quantity = $request->quantity ?? 1;
+        $this->cartService->addToCart($product, $request->quantity);
 
-        $cart = session()->get('cart', []);
+        $cartCount = CartItem::where('user_id', Auth::id())->sum('quantity');
 
-        if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity'] += $quantity;
-        } else {
-            $cart[$product->id] = [
-                'name' => $product->name,
-                'quantity' => $quantity,
-                'price' => $product->price,
-                'image' => $product->image
-            ];
-        }
-
-        session()->put('cart', $cart);
         return response()->json([
             'success' => true,
             'message' => 'Product added to cart successfully!',
-            'cart_count' => count($cart)
-        ]);
-    }
-
-    public function removeFromCart(Request $request)
-    {
-        $cart = session()->get('cart', []);
-        if(isset($cart[$request->product_id])) {
-            unset($cart[$request->product_id]);
-            session()->put('cart', $cart);
-        }
-        return response()->json([
-            'success' => true,
-            'message' => 'Product removed from cart successfully!',
-            'cart_count' => count($cart)
+            'cart_count' => $cartCount
         ]);
     }
 
     public function updateCart(Request $request)
     {
-        $cart = session()->get('cart', []);
-        if(isset($cart[$request->product_id])) {
-            $cart[$request->product_id]['quantity'] = $request->quantity;
-            session()->put('cart', $cart);
-        }
+        $request->validate([
+            'product_id' => 'required|exists:cart_items,id',
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        $this->cartService->updateQuantity($request->product_id, $request->quantity);
+        
+        $cartCount = CartItem::where('user_id', Auth::id())->sum('quantity');
+
         return response()->json([
             'success' => true,
-            'message' => 'Cart updated successfully!'
+            'message' => 'Cart updated successfully!',
+            'cart_count' => $cartCount
+        ]);
+    }
+
+    public function removeFromCart(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:cart_items,id'
+        ]);
+
+        $this->cartService->removeFromCart($request->product_id);
+        $cartCount = CartItem::where('user_id', Auth::id())->sum('quantity');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product removed from cart successfully!',
+            'cart_count' => $cartCount
         ]);
     }
 
     public function checkout()
     {
-        $cartItems = session()->get('cart', []);
-        return view('checkout', compact('cartItems'));
+        $cartItems = $this->cartService->getCartItems();
+        $total = $this->cartService->getCartTotal();
+        return view('checkout', compact('cartItems', 'total'));
     }
 
     public function orderConfirmation()

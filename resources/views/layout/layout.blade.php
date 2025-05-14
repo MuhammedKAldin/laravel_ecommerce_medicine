@@ -64,11 +64,36 @@
 	        <ul class="navbar-nav ml-auto">
 	          <li class="nav-item active"><a href="{{route('home')}}" class="nav-link">Home</a></li>
 	          <li class="nav-item"><a href="{{route('products')}}" class="nav-link">Products</a></li>
-	          <li class="nav-item cta cta-colored">
+            @auth
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}</a>
+              <div class="dropdown-menu" aria-labelledby="dropdown04">
+                <a class="dropdown-item" href="{{ route('profile.edit') }}"> Profile</a>
+                <!-- Authentication -->
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <a class="dropdown-item" href="{{ route('logout') }}"
+                    onclick="event.preventDefault(); 
+                    this.closest('form').submit();">
+                    Logout
+                    </a>
+                </form>
+              </div>
+            </li>
+            <li class="nav-item cta cta-colored">
 	            <a href="{{route('cart')}}" class="nav-link">
-	                <span class="icon-shopping_cart"></span>[{{ count(session()->get('cart', [])) }}]
+	                <span class="icon-shopping_cart"></span>[{{ $cartCount }}]
 	            </a>
 	          </li>
+            @endauth
+            @guest
+            <li class="nav-item cta cta-colored">
+              <a href="{{ route('login') }}" class="nav-link">Login</a>
+            </li>
+            <li class="nav-item cta cta-colored">
+              <a href="{{ route('register') }}" class="nav-link">Register</a>
+            </li>
+            @endguest
 	        </ul>
 	      </div>
 	    </div>

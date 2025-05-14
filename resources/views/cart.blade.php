@@ -17,13 +17,18 @@
 			<div class="container">
 				<div class="row">
     			<div class="col-md-12 ftco-animate">
+    				@if(session('success'))
+    					<div class="alert alert-success">
+    						{{ session('success') }}
+    					</div>
+    				@endif
+
     				<div class="cart-list">
 	    				<table class="table">
 						    <thead class="thead-primary">
 						      <tr class="text-center">
 						        <th>&nbsp;</th>
-						        <th>&nbsp;</th>
-						        <th>Product name</th>
+						        <th>Product</th>
 						        <th>Price</th>
 						        <th>Quantity</th>
 						        <th>Total</th>
@@ -31,33 +36,33 @@
 						    </thead>
 						    <tbody id="cart-items">
 						      @php $total = 0 @endphp
-						      @forelse($cartItems as $id => $details)
-						          @php $total += $details['price'] * $details['quantity'] @endphp
-						          <tr class="text-center" id="cart-row-{{ $id }}">
+						      @forelse($cartItems as $item)
+						          @php $total += $item->price * $item->quantity @endphp
+						          <tr class="text-center" id="cart-row-{{ $item->id }}">
 						            <td class="product-remove">
-						              <a href="javascript:void(0);" onclick="removeFromCart({{ $id }})" class="remove-from-cart">
+						              <a href="javascript:void(0);" onclick="removeFromCart({{ $item->id }})" class="remove-from-cart">
 						                <span class="ion-ios-close"></span>
 						              </a>
 						            </td>
-						            <td class="image-prod">
-						              <div class="img" style="background-image:url({{ $details['image'] }});"></div>
-						            </td>
 						            <td class="product-name">
-						              <h3>{{ $details['name'] }}</h3>
+						              <div class="img-prod">
+						                <img src="{{ asset($item->product->image) }}" class="img-fluid" alt="{{ $item->product->name }}" style="width: 100px;">
+						              </div>
+						              <h3>{{ $item->product->name }}</h3>
 						            </td>
-						            <td class="price">${{ $details['price'] }}</td>
+						            <td class="price">${{ number_format($item->price, 2) }}</td>
 						            <td class="quantity">
 						              <div class="input-group mb-3">
 					                <input type="number" 
 					                       name="quantity" 
 					                       class="quantity form-control input-number" 
-					                       value="{{ $details['quantity'] }}" 
+					                       value="{{ $item->quantity }}" 
 					                       min="1"
-					                       onchange="updateQuantity({{ $id }}, this.value)"
-					                       data-price="{{ $details['price'] }}">
+					                       onchange="updateQuantity({{ $item->id }}, this.value)"
+					                       data-price="{{ $item->price }}">
 					              </div>
 					            </td>
-						            <td class="total" id="total-{{ $id }}">${{ $details['price'] * $details['quantity'] }}</td>
+						            <td class="total" id="total-{{ $item->id }}">${{ number_format($item->price * $item->quantity, 2) }}</td>
 						          </tr>
 						      @empty
 						          <tr>
@@ -118,48 +123,60 @@
 
 @section('scripts')
 <script>
-function updateQuantity(productId, quantity) {
+function updateQuantity(cartItemId, quantity) {
     $.ajax({
         url: '{{ route("cart.update") }}',
         method: 'POST',
         data: {
-            product_id: productId,
-            quantity: quantity
+            product_id: cartItemId,
+            quantity: quantity,
+            _token: '{{ csrf_token() }}'
         },
         success: function(response) {
             if(response.success) {
                 // Update the total for this item
-                let price = $(`#cart-row-${productId} .quantity input`).data('price');
+                let price = $(`#cart-row-${cartItemId} .quantity input`).data('price');
                 let newTotal = price * quantity;
-                $(`#total-${productId}`).text('$' + newTotal.toFixed(2));
+                $(`#total-${cartItemId}`).text('$' + newTotal.toFixed(2));
 
                 // Update cart totals
                 updateCartTotals();
             }
+        },
+        error: function() {
+            alert('Failed to update quantity. Please try again.');
         }
     });
 }
 
-function removeFromCart(productId) {
-    $.ajax({
-        url: '{{ route("cart.remove") }}',
-        method: 'POST',
-        data: { product_id: productId },
-        success: function(response) {
-            if(response.success) {
-                $(`#cart-row-${productId}`).fadeOut(300, function() {
-                    $(this).remove();
-                    updateCartTotals();
-                    $('.icon-shopping_cart').next().text('[' + response.cart_count + ']');
-                    
-                    if(response.cart_count === 0) {
-                        $('#cart-items').html('<tr><td colspan="6" class="text-center">Your cart is empty</td></tr>');
-                        $('.row.justify-content-end').hide();
-                    }
-                });
+function removeFromCart(cartItemId) {
+    if(confirm('Are you sure you want to remove this item?')) {
+        $.ajax({
+            url: '{{ route("cart.remove") }}',
+            method: 'POST',
+            data: { 
+                product_id: cartItemId,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if(response.success) {
+                    $(`#cart-row-${cartItemId}`).fadeOut(300, function() {
+                        $(this).remove();
+                        updateCartTotals();
+                        $('.icon-shopping_cart').next().text('[' + response.cart_count + ']');
+                        
+                        if(response.cart_count === 0) {
+                            $('#cart-items').html('<tr><td colspan="5" class="text-center">Your cart is empty</td></tr>');
+                            $('.row.justify-content-end').hide();
+                        }
+                    });
+                }
+            },
+            error: function() {
+                alert('Failed to remove item. Please try again.');
             }
-        }
-    });
+        });
+    }
 }
 
 function updateCartTotals() {
@@ -175,5 +192,12 @@ function updateCartTotals() {
     $('#cart-subtotal').text('$' + subtotal.toFixed(2));
     $('#cart-total').text('$' + subtotal.toFixed(2));
 }
+
+// Setup CSRF token for all AJAX requests
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    }
+});
 </script>
 @endsection
