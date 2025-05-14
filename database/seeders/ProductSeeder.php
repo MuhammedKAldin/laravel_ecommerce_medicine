@@ -34,6 +34,7 @@ class ProductSeeder extends Seeder
                         'description' => 'High-quality 3-ply disposable face masks',
                         'price' => 12.99,
                         'stock' => 1000,
+                        'image' => 'products/disposable-face-masks.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -43,6 +44,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Powder-free nitrile examination gloves',
                         'price' => 15.99,
                         'stock' => 500,
+                        'image' => 'products/nitrile-examination-gloves.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -52,6 +54,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Quick-read digital thermometer',
                         'price' => 24.99,
                         'stock' => 200,
+                        'image' => 'products/digital-thermometer.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -61,6 +64,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Sterile alcohol prep pads',
                         'price' => 8.99,
                         'stock' => 1000,
+                        'image' => 'products/alcohol-swabs.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -70,6 +74,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Professional dual-head stethoscope',
                         'price' => 49.99,
                         'stock' => 100,
+                        'image' => 'products/stethoscope.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -84,6 +89,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Various sizes of adhesive bandages',
                         'price' => 6.99,
                         'stock' => 1000,
+                        'image' => 'products/adhesive-bandages.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -93,6 +99,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Sterile gauze pads 4"x4"',
                         'price' => 9.99,
                         'stock' => 500,
+                        'image' => 'products/gauze-pads.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -102,6 +109,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Hypoallergenic medical tape',
                         'price' => 4.99,
                         'stock' => 300,
+                        'image' => 'products/medical-tape.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -111,6 +119,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Antiseptic wound cleaning solution',
                         'price' => 12.99,
                         'stock' => 200,
+                        'image' => 'products/wound-cleanser.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -120,6 +129,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Elastic compression bandages',
                         'price' => 14.99,
                         'stock' => 150,
+                        'image' => 'products/compression-bandages.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -134,6 +144,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Digital blood pressure monitor',
                         'price' => 59.99,
                         'stock' => 100,
+                        'image' => 'products/blood-pressure-monitor.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -143,6 +154,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Fingertip pulse oximeter',
                         'price' => 34.99,
                         'stock' => 150,
+                        'image' => 'products/pulse-oximeter.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -152,6 +164,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Folding wheelchair with footrests',
                         'price' => 299.99,
                         'stock' => 50,
+                        'image' => 'products/wheelchair.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -161,6 +174,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Adjustable aluminum walking cane',
                         'price' => 24.99,
                         'stock' => 200,
+                        'image' => 'products/walking-cane.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -170,6 +184,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Portable compressor nebulizer system',
                         'price' => 49.99,
                         'stock' => 75,
+                        'image' => 'products/nebulizer.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -184,6 +199,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Enteral feeding tubes',
                         'price' => 19.99,
                         'stock' => 200,
+                        'image' => 'products/feeding-tubes.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -193,6 +209,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Enteral feeding bags 1000ml',
                         'price' => 14.99,
                         'stock' => 300,
+                        'image' => 'products/feeding-bags.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -202,6 +219,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Feeding tube extension sets',
                         'price' => 9.99,
                         'stock' => 250,
+                        'image' => 'products/extension-sets.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -211,6 +229,7 @@ class ProductSeeder extends Seeder
                         'description' => '60ml enteral feeding syringes',
                         'price' => 7.99,
                         'stock' => 500,
+                        'image' => 'products/feeding-syringes.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
@@ -220,6 +239,7 @@ class ProductSeeder extends Seeder
                         'description' => 'Feeding tube cleaning brushes',
                         'price' => 6.99,
                         'stock' => 150,
+                        'image' => 'products/tube-cleaning-brushes.jpg',
                         'category_id' => $categoryId,
                         'created_at' => $now,
                         'updated_at' => $now
