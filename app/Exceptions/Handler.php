@@ -2,8 +2,12 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
 {
@@ -23,8 +27,40 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        // Handle ModelNotFoundException (findOrFail)
+        $this->renderable(function (ModelNotFoundException $e) {
+            return redirect()->back()
+                ->with('error', 'The requested record was not found.');
+        });
+
+        // Handle NotFoundHttpException (404)
+        $this->renderable(function (NotFoundHttpException $e) {
+            return redirect()->route('home')
+                ->with('error', 'The requested page was not found.');
+        });
+
+        // Handle AuthenticationException
+        $this->renderable(function (AuthenticationException $e) {
+            return redirect()->route('login')
+                ->with('error', 'Please login to access this page.');
+        });
+
+        // Handle ValidationException
+        $this->renderable(function (ValidationException $e) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors($e->errors())
+                ->with('error', 'Please check the form for errors.');
+        });
+
+        // Handle other exceptions
+        $this->renderable(function (Throwable $e) {
+            if (config('app.debug')) {
+                return null; // Let Laravel handle the exception normally in debug mode
+            }
+
+            return redirect()->back()
+                ->with('error', 'An unexpected error occurred. Please try again later.');
         });
     }
 }

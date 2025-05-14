@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class Cartcontroller extends Controller
+class CartController extends Controller
 {
     //
 }

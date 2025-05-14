@@ -6,64 +6,46 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Services\ProductService;
+use App\Services\CategoryService;
 
 class ProductController extends Controller
 {
     protected $productService;
+    protected $categoryService;
 
-    public function __construct(ProductService $productService)
+    public function __construct(ProductService $productService, CategoryService $categoryService)
     {
         $this->productService = $productService;
+        $this->categoryService = $categoryService;
     }
 
     public function index(Request $request)
     {
-        $products = $this->productService->getProducts($request);
-        $categories = Category::withCount('products')->get();
-        
-        if ($products->isEmpty() && $request->has('category')) {
-            return redirect()->route('products')
-                ->with('info', 'No products found in this category.');
-        }
+        $result = $this->productService->getProducts($request);
 
+        $products = $result['products'];
+        $activeCategory = $result['activeCategory'];
+        $categories = $this->categoryService->getAllCategoriesWithCount();
+        
         return view('products', compact('products', 'categories', 'activeCategory'));
     }
 
     public function category($id)
     {
-        try {
-            $activeCategory = Category::findOrFail($id);
-            $products = Product::with('category')
-                ->where('category_id', $id)
-                ->paginate(12);
-            $categories = Category::withCount('products')->get();
+        $result = $this->productService->getProductByCategory($id);
 
-            if ($products->isEmpty()) {
-                return redirect()->route('products')
-                    ->with('info', 'No products found in this category.');
-            }
+        $products = $result['products'];
+        $activeCategory = $result['activeCategory'];
+        $categories = $this->categoryService->getAllCategoriesWithCount();
 
-            return view('products', compact('products', 'categories', 'activeCategory'));
-        } catch (\Exception $e) {
-            return redirect()->route('products')
-                ->with('error', 'Category not found or invalid.');
-        }
+        return view('products', compact('products', 'categories', 'activeCategory'));
     }
     
     public function show($id)
     {
-        try {
-            $product = Product::with('category')->findOrFail($id);
-            $categories = Category::withCount('products')->get();
-            $relatedProducts = Product::where('category_id', $product->category_id)
-                ->where('id', '!=', $id)
-                ->limit(4)
-                ->get();
+        $product = $this->productService->getProductById($id);
+        $relatedProducts = $this->productService->getRelatedProducts($product);
 
-            return view('product-single', compact('product', 'categories', 'relatedProducts'));
-        } catch (\Exception $e) {
-            return redirect()->route('products')
-                ->with('error', 'Product not found.');
-        }
+        return view('product-single', compact('product', 'relatedProducts'));
     }
 }

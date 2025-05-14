@@ -98,21 +98,21 @@
 									<div class="text text-center">
 										<h1> Categories </h1>
 										<p>Start your journey to a healthier life</p>
-										<p><a href="#" class="btn btn-primary">Shop now</a></p>
+										<p><a href="{{ route('products') }}" class="btn btn-primary">Shop now</a></p>
 									</div>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="category-wrap ftco-animate img mb-4 d-flex align-items-end" style="background-image: url(images/category-1.jpg);">
 									<div class="text px-3 py-1">
-										<h2 class="mb-0"><a href="#">
+										<h2 class="mb-0"><a href="{{ route('products', ['category' => 1]) }}">
 										{{ ItemCategory::MedicalSupplies }}
 										</a></h2>
 									</div>
 								</div>
 								<div class="category-wrap ftco-animate img d-flex align-items-end" style="background-image: url(images/category-2.jpg);">
 									<div class="text px-3 py-1">
-										<h2 class="mb-0"><a href="#">
+										<h2 class="mb-0"><a href="{{ route('products', ['category' => 2]) }}">
 										{{ ItemCategory::WoundCareSupplies }}
 										</a>
 										</h2>
@@ -125,14 +125,14 @@
 					<div class="col-md-4">
 						<div class="category-wrap ftco-animate img mb-4 d-flex align-items-end" style="background-image: url(images/category-3.jpg);">
 							<div class="text px-3 py-1">
-								<h2 class="mb-0"><a href="#">
+								<h2 class="mb-0"><a href="{{ route('products', ['category' => 3]) }}">
                 {{ ItemCategory::MedicalEquipment }}
 								</a></h2>
 							</div>		
 						</div>
 						<div class="category-wrap ftco-animate img d-flex align-items-end" style="background-image: url(images/category-4.jpg);">
 							<div class="text px-3 py-1">
-								<h2 class="mb-0"><a href="#">
+								<h2 class="mb-0"><a href="{{ route('products', ['category' => 4]) }}">
 								{{ ItemCategory::EnteralFeedingSupplies }}
 								</a></h2>
 							</div>

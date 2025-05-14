@@ -6,15 +6,16 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProductService
 {
     /**
      * Get products
      * @param Request $request
-     * @return Paginator
+     * @return array
      */
-    public function getProducts(Request $request) : Paginator
+    public function getProducts(Request $request)
     {
         $query = Product::with('category');
         $activeCategory = null;
@@ -25,7 +26,12 @@ class ProductService
             $query->where('category_id', $categoryId);
         }
 
-        return $query->paginate(12)->withQueryString();
+        $products = $query->paginate(12)->withQueryString();
+
+        return [
+            'products' => $products,
+            'activeCategory' => $activeCategory
+        ];
     }
 
     /**
@@ -46,5 +52,19 @@ class ProductService
     public function getProductByCategory($categoryId) : Collection
     {
         return Product::with('category')->where('category_id', $categoryId)->get();
+    }
+
+    /**
+     * Get related products
+     * @param Product $product
+     * @param int $limit
+     * @return Collection
+     */
+    public function getRelatedProducts(Product $product, int $limit = 4): Collection
+    {
+        return Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->limit($limit)
+            ->get();
     }
 }
