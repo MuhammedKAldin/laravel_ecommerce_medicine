@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,20 +31,14 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::get('/products', function () {
-    return view('products');
-})->name('products');
+Route::get('/products', [ProductController::class, 'index'])->name('products'); 
 
-Route::get('/cart', function () {
-    return view('cart');
-})->name('cart');
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.show');
 
-Route::get('/checkout', function () {
-    return view('checkout');
-})->name('checkout');
+Route::get('/cart', [CartController::class, 'cart'])->name('cart');
 
-Route::get('/order-confirmation', function () {
-    return view('order-confirmation');
-})->name('order-confirmation');
+Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+
+Route::get('/order-confirmation', [CartController::class, 'orderConfirmation'])->name('order-confirmation');
 
 require __DIR__.'/auth.php';
