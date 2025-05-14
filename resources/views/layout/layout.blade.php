@@ -27,6 +27,9 @@
     <link rel="stylesheet" href="{{ asset('css/flaticon.css') }}">
     <link rel="stylesheet" href="{{ asset('css/icomoon.css') }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
   </head>
   <body class="goto-here">
 		<div class="py-1 bg-primary">
@@ -61,8 +64,11 @@
 	        <ul class="navbar-nav ml-auto">
 	          <li class="nav-item active"><a href="{{route('home')}}" class="nav-link">Home</a></li>
 	          <li class="nav-item"><a href="{{route('products')}}" class="nav-link">Products</a></li>
-	          <li class="nav-item cta cta-colored"><a href="{{route('cart')}}" class="nav-link"><span class="icon-shopping_cart"></span>[0]</a></li>
-
+	          <li class="nav-item cta cta-colored">
+	            <a href="{{route('cart')}}" class="nav-link">
+	                <span class="icon-shopping_cart"></span>[{{ count(session()->get('cart', [])) }}]
+	            </a>
+	          </li>
 	        </ul>
 	      </div>
 	    </div>
@@ -296,6 +302,97 @@
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
   <script src="{{ asset('js/google-map.js') }}"></script>
   <script src="{{ asset('js/main.js') }}"></script>
-    
+  <script>
+    $(document).ready(function(){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        // Add to cart
+        $('.add-to-cart-btn').click(function(e){
+            e.preventDefault();
+            var productId = $(this).data('product-id');
+            var quantity = $('#quantity').val();
+            var isCartPage = window.location.pathname.includes('/cart');
+
+            $.ajax({
+                url: '{{ route("cart.add") }}',
+                method: 'POST',
+                data: {
+                    product_id: productId,
+                    quantity: quantity
+                },
+                success: function(response){
+                    if(response.success){
+                        // Update cart count in navbar
+                        $('.icon-shopping_cart').next().text('[' + response.cart_count + ']');
+                    }
+                }
+            });
+        });
+
+        // Quantity buttons
+        $('.quantity-right-plus').click(function(e){
+            e.preventDefault();
+            var quantity = parseInt($('#quantity').val());
+            $('#quantity').val(quantity + 1);
+            $('#quantity').trigger('change');
+        });
+
+        $('.quantity-left-minus').click(function(e){
+            e.preventDefault();
+            var quantity = parseInt($('#quantity').val());
+            if(quantity > 1){
+                $('#quantity').val(quantity - 1);
+                $('#quantity').trigger('change');
+            }
+        });
+
+        // Remove from cart
+        $('.product-remove a').click(function(e){
+            e.preventDefault();
+            var productId = $(this).data('product-id');
+            var row = $(this).closest('tr');
+
+            $.ajax({
+                url: '{{ route("cart.remove") }}',
+                method: 'POST',
+                data: {
+                    product_id: productId
+                },
+                success: function(response){
+                    if(response.success){
+                        // Remove the row and update cart count
+                        row.remove();
+                        $('.icon-shopping_cart').next().text('[' + response.cart_count + ']');
+                    }
+                }
+            });
+        });
+
+        // Update cart quantity
+        $('.quantity').change(function(){
+            var productId = $(this).data('product-id');
+            var quantity = $(this).val();
+
+            $.ajax({
+                url: '{{ route("cart.update") }}',
+                method: 'POST',
+                data: {
+                    product_id: productId,
+                    quantity: quantity
+                },
+                success: function(response){
+                    if(response.success){
+                        // Cart updated silently
+                    }
+                }
+            });
+        });
+    });
+  </script>
+  @yield('scripts')
   </body>
 </html>

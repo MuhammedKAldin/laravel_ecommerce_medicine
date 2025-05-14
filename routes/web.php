@@ -37,6 +37,10 @@ Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.
 
 Route::get('/cart', [CartController::class, 'cart'])->name('cart');
 
+Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart/update', [CartController::class, 'updateCart'])->name('cart.update');
+
 Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
 
 Route::get('/order-confirmation', [CartController::class, 'orderConfirmation'])->name('order-confirmation');
