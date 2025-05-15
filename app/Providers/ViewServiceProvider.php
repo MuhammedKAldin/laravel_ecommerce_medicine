@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\CartItem;
+use App\Services\CartService;
 use Illuminate\Support\Facades\Auth;
 
 class ViewServiceProvider extends ServiceProvider
@@ -23,12 +24,8 @@ class ViewServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('*', function ($view) {
-            if (Auth::check()) {
-                $cartCount = CartItem::where('user_id', Auth::id())->sum('quantity');
-            } else {
-                $cartCount = 0;
-            }
-            
+            $cartService = app(CartService::class);
+            $cartCount = $cartService->getCartCount();
             $view->with('cartCount', $cartCount);
         });
     }

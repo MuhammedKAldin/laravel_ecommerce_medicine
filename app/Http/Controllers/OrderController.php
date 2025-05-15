@@ -15,7 +15,7 @@ class OrderController extends Controller
 
     public function __construct(CartService $cartService)
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except(['placeOrder', 'confirmation']);
         $this->cartService = $cartService;
     }
 
@@ -45,7 +45,7 @@ class OrderController extends Controller
                 'max:20',
                 'regex:/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,8}$/'
             ],
-            'email' => 'required|email:rfc,dns|max:255',
+            'email' => 'required|email|max:255',
             'payment_method' => 'required|in:bank_transfer,check,paypal',
             'terms' => 'required|accepted'
         ], [
@@ -57,8 +57,6 @@ class OrderController extends Controller
             'postcode.regex' => 'Invalid postcode format',
             'phone.regex' => 'Please enter a valid phone number',
             'phone.min' => 'Phone number must be at least 6 digits long',
-            'email.email' => 'Please enter a valid email address',
-            'email.dns' => 'Please enter a valid email domain'
         ]);
 
         try {
@@ -76,43 +74,48 @@ class OrderController extends Controller
             $discount = session()->get('discount', 0);
             $total = $subtotal + $delivery - $discount;
 
-            // Update user's empty fields with checkout data
-            $user = auth()->user();
-            $userUpdates = [];
+            // Set user_id if authenticated, null if guest
+            $user_id = auth()->check() ? auth()->id() : null;
 
-            if (empty($user->first_name)) {
-                $userUpdates['first_name'] = $request->firstname;
-            }
-            if (empty($user->last_name)) {
-                $userUpdates['last_name'] = $request->lastname;
-            }
-            if (empty($user->phone)) {
-                $userUpdates['phone'] = $request->phone;
-            }
-            if (empty($user->country)) {
-                $userUpdates['country'] = $request->country;
-            }
-            if (empty($user->street_address)) {
-                $userUpdates['street_address'] = $request->street_address;
-            }
-            if (empty($user->apartment)) {
-                $userUpdates['apartment'] = $request->apartment;
-            }
-            if (empty($user->city)) {
-                $userUpdates['city'] = $request->city;
-            }
-            if (empty($user->postcode)) {
-                $userUpdates['postcode'] = $request->postcode;
+            // Only update user data if authenticated
+            if (auth()->check()) {
+                $user = auth()->user();
+                $userUpdates = [];
+
+                if (empty($user->first_name)) {
+                    $userUpdates['first_name'] = $request->firstname;
+                }
+                if (empty($user->last_name)) {
+                    $userUpdates['last_name'] = $request->lastname;
+                }
+                if (empty($user->phone)) {
+                    $userUpdates['phone'] = $request->phone;
+                }
+                if (empty($user->country)) {
+                    $userUpdates['country'] = $request->country;
+                }
+                if (empty($user->street_address)) {
+                    $userUpdates['street_address'] = $request->street_address;
+                }
+                if (empty($user->apartment)) {
+                    $userUpdates['apartment'] = $request->apartment;
+                }
+                if (empty($user->city)) {
+                    $userUpdates['city'] = $request->city;
+                }
+                if (empty($user->postcode)) {
+                    $userUpdates['postcode'] = $request->postcode;
+                }
+
+                // Only update if there are empty fields
+                if (!empty($userUpdates)) {
+                    $user->update($userUpdates);
+                }
             }
 
-            // Only update if there are empty fields
-            if (!empty($userUpdates)) {
-                $user->update($userUpdates);
-            }
-
-            // Create invoice
+            // Create invoice with user_id if authenticated, null if guest
             $invoice = CustomerInvoice::create([
-                'user_id' => auth()->id(),
+                'user_id' => $user_id,
                 'invoice_number' => 'INV-' . Str::random(10),
                 'subtotal' => $subtotal,
                 'delivery' => $delivery,
@@ -135,7 +138,7 @@ class OrderController extends Controller
             foreach ($cartItems as $item) {
                 CustomerInvoiceDetail::create([
                     'invoice_id' => $invoice->id,
-                    'product_id' => $item->product_id,
+                    'product_id' => $item->product->id,
                     'quantity' => $item->quantity,
                     'unit_price' => $item->price,
                     'total_price' => $item->price * $item->quantity
@@ -165,10 +168,20 @@ class OrderController extends Controller
 
     public function confirmation($invoice)
     {
-        $invoice = CustomerInvoice::with(['details.product'])
-            ->where('invoice_number', $invoice)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
+        $query = CustomerInvoice::with(['details.product'])
+            ->where('invoice_number', $invoice);
+
+        // If user is authenticated, only show their orders
+        if (auth()->check()) {
+            $query->where('user_id', auth()->id());
+        } 
+        else 
+        {
+            // For guests, only show orders from the current session
+            $query->whereNull('user_id');
+        }
+
+        $invoice = $query->firstOrFail();
 
         return view('order-confirmation', compact('invoice'));
     }

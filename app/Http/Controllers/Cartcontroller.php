@@ -14,7 +14,6 @@ class CartController extends Controller
 
     public function __construct(CartService $cartService)
     {
-        $this->middleware('auth');
         $this->cartService = $cartService;
     }
 
@@ -35,7 +34,7 @@ class CartController extends Controller
         $product = Product::findOrFail($request->product_id);
         $this->cartService->addToCart($product, $request->quantity);
 
-        $cartCount = CartItem::where('user_id', Auth::id())->sum('quantity');
+        $cartCount = $this->cartService->getCartCount();
 
         return response()->json([
             'success' => true,
@@ -47,13 +46,13 @@ class CartController extends Controller
     public function updateCart(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|exists:cart_items,id',
+            'product_id' => 'required',
             'quantity' => 'required|integer|min:1'
         ]);
 
         $this->cartService->updateQuantity($request->product_id, $request->quantity);
         
-        $cartCount = CartItem::where('user_id', Auth::id())->sum('quantity');
+        $cartCount = $this->cartService->getCartCount();
 
         return response()->json([
             'success' => true,
@@ -65,11 +64,11 @@ class CartController extends Controller
     public function removeFromCart(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|exists:cart_items,id'
+            'product_id' => 'required'
         ]);
 
         $this->cartService->removeFromCart($request->product_id);
-        $cartCount = CartItem::where('user_id', Auth::id())->sum('quantity');
+        $cartCount = $this->cartService->getCartCount();
 
         return response()->json([
             'success' => true,
@@ -84,6 +83,10 @@ class CartController extends Controller
         $total = $this->cartService->getCartTotal();
         $user = Auth::user();
         
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('cart')->with('error', 'Your cart is empty');
+        }
+
         // Calculate cart totals
         $subtotal = $total;
         $delivery = 0.00;

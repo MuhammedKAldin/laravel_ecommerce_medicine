@@ -81,11 +81,6 @@
                 </form>
               </div>
             </li>
-            <li class="nav-item cta cta-colored">
-	            <a href="{{route('cart')}}" class="nav-link">
-	                <span class="icon-shopping_cart"></span>[{{ $cartCount }}]
-	            </a>
-	          </li>
             @endauth
             @guest
             <li class="nav-item cta cta-colored">
@@ -95,6 +90,11 @@
               <a href="{{ route('register') }}" class="nav-link">Register</a>
             </li>
             @endguest
+            <li class="nav-item cta cta-colored">
+	            <a href="{{route('cart')}}" class="nav-link">
+	                <span class="icon-shopping_cart"></span>[{{ $cartCount }}]
+	            </a>
+	          </li>
 	        </ul>
 	      </div>
 	    </div>

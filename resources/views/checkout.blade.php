@@ -31,7 +31,11 @@
 	                <div class="form-group">
 	                	<label for="firstname">First Name</label>
 	                  <input type="text" name="firstname" class="form-control @error('firstname') is-invalid @enderror" 
-	                    value="{{ old('firstname', $user->first_name ?: explode(' ', $user->name)[0]) }}" 
+	                    @if(isset($user))
+	                        value="{{ old('firstname', $user->first_name ?: explode(' ', $user->name)[0]) }}" 
+	                    @else
+	                        value="{{ old('firstname') }}"
+	                    @endif
 	                    placeholder="First Name" style="color: black!important;">
                       @error('firstname')
                           <div class="invalid-feedback">{{ $message }}</div>
@@ -42,7 +46,11 @@
 	                <div class="form-group">
 	                	<label for="lastname">Last Name</label>
 	                  <input type="text" name="lastname" class="form-control @error('lastname') is-invalid @enderror" 
-	                    value="{{ old('lastname', $user->last_name ?: explode(' ', $user->name)[1]) }}" 
+	                    @if(isset($user))
+	                        value="{{ old('lastname', $user->last_name ?: explode(' ', $user->name)[1]) }}" 
+	                    @else
+	                        value="{{ old('lastname') }}"
+	                    @endif
 	                    placeholder="Last Name" style="color: black!important;">
                       @error('lastname')
                           <div class="invalid-feedback">{{ $message }}</div>
@@ -60,9 +68,15 @@
 		                  		$countries = ['Egypt', 'France', 'Italy', 'Philippines', 'South Korea', 'Hongkong', 'Japan'];
 		                  	@endphp
 		                  	@foreach($countries as $country)
-		                  		<option value="{{ $country }}" {{ old('country', $user->country) == $country ? 'selected' : '' }}>
-		                  			{{ $country }}
-		                  		</option>
+								@if(isset($user))
+									<option value="{{ $country }}" {{ old('country', $user->country) == $country ? 'selected' : '' }}>
+										{{ $country }}
+									</option>
+								@else
+									<option value="{{ $country }}" {{ old('country') == $country ? 'selected' : '' }}>
+										{{ $country }}
+									</option>
+								@endif
 		                  	@endforeach
 		                  </select>
                           @error('country')
@@ -76,7 +90,11 @@
 		            	<div class="form-group">
 	                	<label for="street_address">Street Address</label>
 	                  <input type="text" name="street_address" class="form-control @error('street_address') is-invalid @enderror" 
-	                    value="{{ old('street_address', $user->street_address) }}" 
+	                    @if(isset($user))
+	                        value="{{ old('street_address', $user->street_address) }}" 
+	                    @else
+	                        value="{{ old('street_address') }}"
+	                    @endif
 	                    placeholder="House number and street name" style="color: black!important;">
                       @error('street_address')
                           <div class="invalid-feedback">{{ $message }}</div>
@@ -86,7 +104,11 @@
 		            <div class="col-md-6">
 		            	<div class="form-group">
 	                  <input type="text" name="apartment" class="form-control @error('apartment') is-invalid @enderror" 
-	                    value="{{ old('apartment', $user->apartment) }}" 
+	                    @if(isset($user))
+	                        value="{{ old('apartment', $user->apartment) }}" 
+	                    @else
+	                        value="{{ old('apartment') }}"
+	                    @endif
 	                    placeholder="Apartment, suite, unit etc: (optional)" style="color: black!important;">
                       @error('apartment')
                           <div class="invalid-feedback">{{ $message }}</div>
@@ -98,7 +120,12 @@
 		            	<div class="form-group">
 	                	<label for="city">Town / City</label>
 	                  <input type="text" name="city" class="form-control @error('city') is-invalid @enderror" 
-	                    value="{{ old('city', $user->city) }}" style="color: black!important;">
+	                    @if(isset($user))
+	                        value="{{ old('city', $user->city) }}" 
+	                    @else
+	                        value="{{ old('city') }}"
+	                    @endif
+	                    style="color: black!important;">
                       @error('city')
                           <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -108,7 +135,12 @@
 		            	<div class="form-group">
 		            		<label for="postcode">Postcode / ZIP *</label>
 	                  <input type="text" name="postcode" class="form-control @error('postcode') is-invalid @enderror" 
-	                    value="{{ old('postcode', $user->postcode) }}" style="color: black!important;">
+	                    @if(isset($user))
+	                        value="{{ old('postcode', $user->postcode) }}" 
+	                    @else
+	                        value="{{ old('postcode') }}"
+	                    @endif
+	                    style="color: black!important;">
                       @error('postcode')
                           <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
@@ -119,7 +151,11 @@
 	                <div class="form-group">
 	                	<label for="phone">Phone</label>
 	                  <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" 
-	                    value="{{ old('phone', $user->phone) }}" 
+	                    @if(isset($user))
+	                        value="{{ old('phone', $user->phone) }}" 
+	                    @else
+	                        value="{{ old('phone') }}"
+	                    @endif
 	                    placeholder="Enter your phone number" style="color: black!important;">
                       @error('phone')
                           <div class="invalid-feedback">{{ $message }}</div>
@@ -130,7 +166,11 @@
 	                <div class="form-group">
 	                	<label for="email">Email Address</label>
 	                  <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" 
-	                    value="{{ old('email', $user->email) }}" 
+	                    @if(isset($user))
+	                        value="{{ old('email', $user->email) }}" 
+	                    @else
+	                        value="{{ old('email') }}"
+	                    @endif
 	                    placeholder="Enter your email" style="color: black!important;">
                       @error('email')
                           <div class="invalid-feedback">{{ $message }}</div>
@@ -155,21 +195,33 @@
 							<div class="form-group">
 								<div class="col-md-12 @error('payment_method') is-invalid @enderror">
 									<div class="radio">
-									   <label><input type="radio" name="payment_method" value="bank_transfer" {{ old('payment_method') == 'bank_transfer' ? 'checked' : '' }}> Direct Bank Transfer</label>
+										@if(isset($user))
+											<label><input type="radio" name="payment_method" value="bank_transfer" {{ old('payment_method', $user->payment_method) == 'bank_transfer' ? 'checked' : '' }}> Direct Bank Transfer</label>
+										@else
+											<label><input type="radio" name="payment_method" value="bank_transfer" {{ old('payment_method') == 'bank_transfer' ? 'checked' : '' }}> Direct Bank Transfer</label>
+										@endif
 									</div>
 								</div>
 							</div>
 							<div class="form-group">
 								<div class="col-md-12">
 									<div class="radio">
-									   <label><input type="radio" name="payment_method" value="check" {{ old('payment_method') == 'check' ? 'checked' : '' }}> Check Payment</label>
+										@if(isset($user))
+											<label><input type="radio" name="payment_method" value="check" {{ old('payment_method', $user->payment_method) == 'check' ? 'checked' : '' }}> Check Payment</label>
+										@else
+											<label><input type="radio" name="payment_method" value="check" {{ old('payment_method') == 'check' ? 'checked' : '' }}> Check Payment</label>
+										@endif
 									</div>
 								</div>
 							</div>
 							<div class="form-group">
 								<div class="col-md-12">
 									<div class="radio">
-									   <label><input type="radio" name="payment_method" value="paypal" {{ old('payment_method') == 'paypal' ? 'checked' : '' }}> Paypal</label>
+										@if(isset($user))
+											<label><input type="radio" name="payment_method" value="paypal" {{ old('payment_method', $user->payment_method) == 'paypal' ? 'checked' : '' }}> Paypal</label>
+										@else
+											<label><input type="radio" name="payment_method" value="paypal" {{ old('payment_method') == 'paypal' ? 'checked' : '' }}> Paypal</label>
+										@endif
 									</div>
 								</div>
 							</div>
@@ -179,7 +231,11 @@
 							<div class="form-group mt-4">
 								<div class="col-md-12">
 									<div class="checkbox">
-									   <label><input type="checkbox" name="terms" value="1" {{ old('terms') ? 'checked' : '' }} class="@error('terms') is-invalid @enderror"> I have read and accept the terms and conditions</label>
+										@if(isset($user))
+											<label><input type="checkbox" name="terms" value="1" {{ old('terms', $user->terms) ? 'checked' : '' }} class="@error('terms') is-invalid @enderror"> I have read and accept the terms and conditions</label>
+										@else
+											<label><input type="checkbox" name="terms" value="1" {{ old('terms') ? 'checked' : '' }} class="@error('terms') is-invalid @enderror"> I have read and accept the terms and conditions</label>
+										@endif
 									</div>
                                     @error('terms')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -222,7 +278,7 @@
       </div>
     </section>
 
-    @if(config('app.debug'))
+    @if(config('app.debug') && isset($user))
     <div class="container" style="margin-bottom: 20px;">
         <div class="row">
             <div class="col-12">
