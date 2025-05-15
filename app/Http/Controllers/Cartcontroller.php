@@ -82,7 +82,14 @@ class CartController extends Controller
     {
         $cartItems = $this->cartService->getCartItems();
         $total = $this->cartService->getCartTotal();
-        return view('checkout', compact('cartItems', 'total'));
+        $user = Auth::user();
+        
+        // Calculate cart totals
+        $subtotal = $total;
+        $delivery = 0.00;
+        $discount = 0.00;
+        
+        return view('checkout', compact('cartItems', 'total', 'user', 'subtotal', 'delivery', 'discount'));
     }
 
     public function orderConfirmation()

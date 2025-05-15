@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +24,8 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.update.address');
+    Route::patch('/profile/contact', [ProfileController::class, 'updateContact'])->name('profile.update.contact');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -42,7 +45,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/update', [CartController::class, 'updateCart'])->name('cart.update');
     Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
     Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders');
     Route::get('/order-confirmation', [CartController::class, 'orderConfirmation'])->name('order-confirmation');
 });
+
+Route::post('/place-order', [OrderController::class, 'placeOrder'])->name('place.order');
+Route::get('/order-confirmation/{invoice}', [OrderController::class, 'confirmation'])->name('order.confirmation');
 
 require __DIR__.'/auth.php';
