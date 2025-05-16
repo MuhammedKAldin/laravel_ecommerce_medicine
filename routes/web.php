@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
@@ -59,5 +60,15 @@ Route::get('/order-confirmation/{invoice}', [OrderController::class, 'confirmati
 
 // Admin Routes
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+Route::resource('/admin/products', AdminProductController::class)->names('admin.products');
+
+// Admin Invoice Routes
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/invoices', [App\Http\Controllers\Admin\InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/invoices/{invoice}', [App\Http\Controllers\Admin\InvoiceController::class, 'show'])->name('invoices.show');
+    Route::put('/invoices/{invoice}', [App\Http\Controllers\Admin\InvoiceController::class, 'update'])->name('invoices.update');
+    Route::post('/invoices/{invoice}/items', [App\Http\Controllers\Admin\InvoiceController::class, 'addItem'])->name('invoices.add-item');
+    Route::delete('/invoices/{invoice}/items/{item}', [App\Http\Controllers\Admin\InvoiceController::class, 'deleteItem'])->name('invoices.delete-item');
+});
 
 require __DIR__.'/auth.php';

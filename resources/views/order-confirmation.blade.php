@@ -103,8 +103,8 @@
                 <p class="mb-1"><strong>Payment Method:</strong> {{ ucfirst(str_replace('_', ' ', $invoice->payment_method)) }}</p>
                 <p class="mb-1">
                   <strong>Status:</strong>
-                  <span class="badge bg-{{ $invoice->status === 'paid' ? 'success' : 'warning' }}">
-                    {{ ucfirst($invoice->status) }}
+                  <span class="badge bg-{{ $invoice->status->color() }}">
+                    {{ $invoice->status->label() }}
                   </span>
                 </p>
                 <p class="mb-0"><strong>Date:</strong> {{ $invoice->created_at->format('M d, Y H:i') }}</p>

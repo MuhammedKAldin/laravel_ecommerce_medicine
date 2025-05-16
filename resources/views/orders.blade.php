@@ -43,8 +43,8 @@
 						            </td>
 						            <td>${{ number_format($invoice->total, 2) }}</td>
 						            <td>
-						              <span class="badge badge-{{ $invoice->status === 'completed' ? 'success' : ($invoice->status === 'pending' ? 'warning' : 'secondary') }}">
-						                {{ ucfirst($invoice->status) }}
+						              <span class="badge badge-{{ $invoice->status->color() }}">
+						                {{ $invoice->status->label() }}
 						              </span>
 						            </td>
 						            <td>

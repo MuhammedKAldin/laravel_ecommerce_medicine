@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\InvoiceStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +29,10 @@ class CustomerInvoice extends Model
         'postcode',
         'payment_method',
         'status'
+    ];
+
+    protected $casts = [
+        'status' => InvoiceStatus::class
     ];
 
     public function details(): HasMany
