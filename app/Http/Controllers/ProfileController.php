@@ -28,11 +28,12 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        $validated = $request->validated();
+        
         $request->user()->fill([
-            'first_name' => $request->firstname,
-            'last_name' => $request->lastname,
-            'name' => $request->firstname . ' ' . $request->lastname,
-            'email' => $request->email,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
         ]);
 
         if ($request->user()->isDirty('email')) {
@@ -58,24 +59,6 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'address-updated');
-    }
-
-    public function updateContact(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'phone' => ['required', 'string', 'max:20'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)->ignore($request->user()->id)],
-        ]);
-
-        $request->user()->fill($validated);
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'contact-updated');
     }
 
     /**

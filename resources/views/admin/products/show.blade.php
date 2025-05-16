@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="row mb-2 mt-3 mb-xl-3">
+                <div class="row mb-2 mb-xl-3">
                     <div class="col-auto d-none d-sm-block">
                         <h3>{{ $edit ? 'Edit Product' : 'View Product' }}</h3>
                     </div>

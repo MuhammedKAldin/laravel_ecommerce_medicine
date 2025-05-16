@@ -18,6 +18,20 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'phone' => ['required', 'string', 'min:6', 'max:20', 'regex:/^[0-9\s\-\+\(\)]+$/'],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'phone.regex' => 'Please enter a valid phone number',
+            'phone.min' => 'Phone number must be at least 6 digits long',
         ];
     }
 }

@@ -2,15 +2,14 @@
 
 @section('content')
 <div class="container-fluid p-0">
-    <div class="row mb-2 mb-xl-3">
-        <div class="col-auto d-none d-sm-block">
-            <h3>Create Product</h3>
-        </div>
-    </div>
-
     <div class="row">
         <div class="col-12">
             <div class="card">
+                <div class="row mb-2 mb-xl-3">
+                    <div class="col-auto d-none d-sm-block">
+                        <h3>Create Product</h3>
+                    </div>
+                </div>
                 <div class="card-body">
                     @if($errors->any())
                         <div class="alert alert-danger">

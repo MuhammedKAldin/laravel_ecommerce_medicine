@@ -59,12 +59,16 @@ Route::post('/place-order', [OrderController::class, 'placeOrder'])->name('place
 Route::get('/order-confirmation/{invoice}', [OrderController::class, 'confirmation'])->name('order.confirmation');
 
 // Admin Routes
-Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-Route::resource('/admin/products', AdminProductController::class)->names('admin.products');
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
 
-// Admin Invoice Routes
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/invoices', [App\Http\Controllers\Admin\InvoiceController::class, 'index'])->name('invoices.index');
+    // Product Routes
+    Route::get('/products/logs', [App\Http\Controllers\Admin\ProductLogsController::class, 'index'])->name('products.logs');
+    Route::get('/products/logs/{id}', [App\Http\Controllers\Admin\ProductLogsController::class, 'show'])->name('products.logs.show');
+    Route::resource('/products', AdminProductController::class)->names('products');
+
+    // Invoice Routes
+    Route::get('/invoices', [App\Http\Controllers\Admin\InvoiceController::class, 'index'])->name('invoices.index'); 
     Route::get('/invoices/{invoice}', [App\Http\Controllers\Admin\InvoiceController::class, 'show'])->name('invoices.show');
     Route::put('/invoices/{invoice}', [App\Http\Controllers\Admin\InvoiceController::class, 'update'])->name('invoices.update');
     Route::post('/invoices/{invoice}/items', [App\Http\Controllers\Admin\InvoiceController::class, 'addItem'])->name('invoices.add-item');
