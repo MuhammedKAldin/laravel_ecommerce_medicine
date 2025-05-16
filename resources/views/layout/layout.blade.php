@@ -68,6 +68,9 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}</a>
               <div class="dropdown-menu" aria-labelledby="dropdown04">
+                @if(auth()->user()->is_admin)
+                  <a class="dropdown-item" href="{{ route('admin.dashboard') }}"> Admin Dashboard</a>
+                @endif
                 <a class="dropdown-item" href="{{ route('profile.edit') }}"> Profile</a>
                 <a class="dropdown-item" href="{{ route('orders') }}"> Orders</a>
                 <!-- Authentication -->

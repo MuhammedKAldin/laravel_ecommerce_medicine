@@ -54,6 +54,13 @@
                         </a>
                     </li>
 
+					<!-- Website -->
+					<li class="sidebar-item {{ request()->routeIs('home') ? 'active' : '' }}">
+						<a class="sidebar-link" href="{{ route('home') }}">
+                            <i class="align-middle" data-feather="globe"></i> <span class="align-middle">Website</span>
+                        </a>
+                    </li>
+
                     <!-- Products -->
 					<li class="sidebar-header">
 						Products
