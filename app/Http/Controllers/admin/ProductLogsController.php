@@ -3,12 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ProductLog;
-use App\Models\Product;
+use App\Services\Admin\ProductLogsService;
 use Illuminate\Http\Request;
 
 class ProductLogsController extends Controller
 {
+    protected $productLogsService;
+
+    public function __construct(ProductLogsService $productLogsService)
+    {
+        $this->productLogsService = $productLogsService;
+    }
+
     /**
      * Display a listing of the product logs.
      *
@@ -17,22 +23,8 @@ class ProductLogsController extends Controller
      */
     public function index(Request $request)
     {
-        $query = ProductLog::with(['product', 'admin']);
-
-        // Search by product name
-        if ($request->filled('search_product')) {
-            $query->whereHas('product', function($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search_product . '%');
-            });
-        }
-
-        // Filter by action
-        if ($request->filled('action')) {
-            $query->where('action', $request->action);
-        }
-
-        $logs = $query->latest()->paginate(15)->withQueryString();
-        $products = Product::all();
+        $logs = $this->productLogsService->getLogs($request);
+        $products = $this->productLogsService->getAllProducts();
 
         return view('admin.products.logs.index', compact('logs', 'products'));
     }
@@ -45,7 +37,7 @@ class ProductLogsController extends Controller
      */
     public function show($id)
     {
-        $log = ProductLog::with(['product', 'admin'])->findOrFail($id);
+        $log = $this->productLogsService->getLogDetails($id);
         return view('admin.products.logs.show', compact('log'));
     }
 } 

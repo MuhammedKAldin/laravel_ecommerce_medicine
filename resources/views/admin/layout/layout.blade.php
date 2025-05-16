@@ -202,12 +202,15 @@
         @endif
 
         @if($errors->any())
+            let errorHtml = '';
+            @foreach($errors->all() as $error)
+                errorHtml += '<span class="badge bg-danger me-1 mb-1 d-inline-block">{{ $error }}</span>';
+            @endforeach
+            
             Swal.fire({
                 icon: 'error',
                 title: 'Validation Error',
-                html: `@foreach($errors->all() as $error)
-                    <div class="text-left">{{ $error }}</div>
-                @endforeach`,
+                html: errorHtml,
             });
         @endif
     </script>

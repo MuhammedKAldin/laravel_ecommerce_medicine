@@ -5,11 +5,19 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
+use App\Services\Admin\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     /**
      * Display a listing of the products.
      *
@@ -17,19 +25,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::query();
-
-        // Search by product name
-        if ($request->filled('search_name')) {
-            $query->where('name', 'like', '%' . $request->search_name . '%');
-        }
-
-        // Search by category
-        if ($request->filled('search_category')) {
-            $query->where('category_id', $request->search_category);
-        }
-
-        $products = $query->latest()->paginate(10)->withQueryString();
+        $products = $this->productService->getProducts($request);
         $categories = Category::all();
 
         return view('admin.products.list', compact('products', 'categories'));
@@ -56,19 +52,13 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required',
             'description' => 'required',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|min:1',
             'category_id' => 'required|exists:categories,id',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        $data = $request->except('image');
+        $this->productService->createProduct($request->except('image'), $request->file('image'));
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
-            $data['image'] = $imagePath;
-        }
-
-        Product::create($data);
         return redirect()->route('admin.products.index')
             ->with('success', 'Product created successfully.');
     }
@@ -98,25 +88,16 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required',
             'description' => 'required',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|min:1',
             'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        $data = $request->except('image');
-
-        if ($request->hasFile('image')) {
-            // Delete old image if it exists
-            if ($product->getRawOriginal('image')) {
-                Storage::disk('public')->delete($product->getRawOriginal('image'));
-            }
-
-            // Store the new image
-            $imagePath = $request->file('image')->store('products', 'public');
-            $data['image'] = $imagePath;
-        }
-
-        $product->update($data);
+        $this->productService->updateProduct(
+            $product, 
+            $request->except('image'), 
+            $request->hasFile('image') ? $request->file('image') : null
+        );
 
         return redirect()->route('admin.products.show', $product)
             ->with('success', 'Product updated successfully.');
@@ -130,7 +111,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product->delete();
+        $this->productService->deleteProduct($product);
         return redirect()->route('admin.products.index')
             ->with('success', 'Product deleted successfully.');
     }

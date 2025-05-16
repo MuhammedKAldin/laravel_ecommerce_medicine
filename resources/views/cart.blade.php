@@ -18,8 +18,8 @@
 				<div class="row">
     			<div class="col-md-12 ftco-animate">
     				@if(session('success'))
-    					<div class="alert alert-success">
-    						{{ session('success') }}
+    					<div class="mb-3">
+    						<span class="badge bg-success">{{ session('success') }}</span>
     					</div>
     				@endif
 

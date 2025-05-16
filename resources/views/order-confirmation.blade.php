@@ -72,8 +72,8 @@
     <div class="row justify-content-center">
       <div class="col-12 col-lg-10">
         @if(session('success'))
-          <div class="alert alert-success text-center mb-5">
-            {{ session('success') }}
+          <div class="text-center mb-5">
+            <span class="badge bg-success">{{ session('success') }}</span>
           </div>
         @endif
 

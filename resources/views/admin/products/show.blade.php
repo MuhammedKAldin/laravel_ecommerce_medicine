@@ -17,12 +17,10 @@
                 </div>
                 <div class="card-body">
                     @if($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
+                        <div class="mb-3">
+                            @foreach($errors->all() as $error)
+                                <span class="badge bg-danger me-1">{{ $error }}</span>
+                            @endforeach
                         </div>
                     @endif
 

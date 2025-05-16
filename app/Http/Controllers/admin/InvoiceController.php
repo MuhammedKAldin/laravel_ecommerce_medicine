@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CustomerInvoice;
 use App\Models\CustomerInvoiceDetail;
-use App\Models\Product;
+use App\Services\Admin\InvoiceService;
 use App\Enums\InvoiceStatus;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -13,37 +13,24 @@ use Illuminate\Validation\Rule;
 
 class InvoiceController extends Controller
 {
+    protected $invoiceService;
+
+    public function __construct(InvoiceService $invoiceService)
+    {
+        $this->invoiceService = $invoiceService;
+    }
+
     public function index(Request $request)
     {
-        $query = CustomerInvoice::with(['user'])
-            ->orderBy('created_at', 'desc');
-
-        // Apply filters
-        if ($request->search_invoice) {
-            $query->where('invoice_number', 'like', '%' . $request->search_invoice . '%');
-        }
-
-        if ($request->search_status) {
-            $query->where('status', $request->search_status);
-        }
-
-        if ($request->search_customer) {
-            $query->whereHas('user', function($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search_customer . '%');
-            });
-        }
-
-        $invoices = $query->paginate(10);
-
+        $invoices = $this->invoiceService->getInvoices($request);
         return view('admin.invoices.list', compact('invoices'));
     }
 
     public function show(CustomerInvoice $invoice)
     {
-        $invoice->load(['user', 'details.product']);
-        $products = Product::all(); // For adding new items
+        $data = $this->invoiceService->getInvoiceDetails($invoice);
         $statuses = InvoiceStatus::cases();
-        return view('admin.invoices.show', compact('invoice', 'products', 'statuses'));
+        return view('admin.invoices.show', array_merge($data, ['statuses' => $statuses]));
     }
 
     public function update(Request $request, CustomerInvoice $invoice)
@@ -52,26 +39,17 @@ class InvoiceController extends Controller
             'status' => ['required', Rule::enum(InvoiceStatus::class)]
         ]);
 
-        $invoice->update([
-            'status' => $request->status
-        ]);
-
+        $this->invoiceService->updateInvoiceStatus($invoice, $request->status);
         return redirect()->back()->with('success', 'Invoice status updated successfully');
     }
 
     public function deleteItem(CustomerInvoice $invoice, CustomerInvoiceDetail $item)
     {
-        if ($item->invoice_id !== $invoice->id) {
-            return redirect()->back()->with('error', 'Invalid item');
+        if ($this->invoiceService->deleteInvoiceItem($invoice, $item)) {
+            return redirect()->back()->with('success', 'Item removed successfully');
         }
-
-        $item->delete();
         
-        // Recalculate invoice total using total_price from details
-        $invoice->total = $invoice->details()->sum('total_price');
-        $invoice->save();
-
-        return redirect()->back()->with('success', 'Item removed successfully');
+        return redirect()->back()->with('error', 'Invalid item');
     }
 
     public function addItem(Request $request, CustomerInvoice $invoice)
@@ -81,21 +59,7 @@ class InvoiceController extends Controller
             'quantity' => 'required|integer|min:1'
         ]);
 
-        $product = Product::findOrFail($request->product_id);
-
-        $invoiceDetail = new CustomerInvoiceDetail([
-            'product_id' => $product->id,
-            'quantity' => $request->quantity,
-            'unit_price' => $product->price,
-            'total_price' => $product->price * $request->quantity
-        ]);
-
-        $invoice->details()->save($invoiceDetail);
-
-        // Recalculate invoice total using total_price from details
-        $invoice->total = $invoice->details()->sum('total_price');
-        $invoice->save();
-
+        $this->invoiceService->addInvoiceItem($invoice, $request->all());
         return redirect()->back()->with('success', 'Item added successfully');
     }
 } 

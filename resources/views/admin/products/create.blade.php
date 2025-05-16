@@ -11,13 +11,13 @@
                     </div>
                 </div>
                 <div class="card-body">
+
+                    <!-- Error Messages -->
                     @if($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
+                        <div class="mb-3">
+                            @foreach($errors->all() as $error)
+                                <span class="badge bg-danger me-1">{{ $error }}</span>
+                            @endforeach
                         </div>
                     @endif
 
@@ -46,7 +46,7 @@
                             <div class="input-group">
                                 <span class="input-group-text">$</span>
                                 <input type="number" class="form-control @error('price') is-invalid @enderror" 
-                                       id="price" name="price" value="{{ old('price') }}" step="0.01" required>
+                                       id="price" name="price" value="{{ old('price') }}" step="0.5" required>
                             </div>
                             @error('price')
                                 <div class="invalid-feedback">{{ $message }}</div>

@@ -2,29 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CustomerInvoice;
-use App\Models\CustomerInvoiceDetail;
+use App\Services\OrderService;
 use App\Services\CartService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
+    protected $orderService;
     protected $cartService;
 
-    public function __construct(CartService $cartService)
+    public function __construct(OrderService $orderService, CartService $cartService)
     {
         $this->middleware('auth')->except(['placeOrder', 'confirmation']);
+        $this->orderService = $orderService;
         $this->cartService = $cartService;
     }
 
     public function index()
     {
-        $invoices = CustomerInvoice::where('user_id', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
+        $invoices = $this->orderService->getUserOrders(auth()->id());
         return view('orders', compact('invoices'));
     }
 
@@ -60,134 +56,29 @@ class OrderController extends Controller
         ]);
 
         try {
-            DB::beginTransaction();
+            // Place order using service
+            $invoice = $this->orderService->placeOrder($request->all());
 
-            // Get cart items using CartService
-            $cartItems = $this->cartService->getCartItems();
-            
-            if ($cartItems->isEmpty()) {
-                return back()->with('error', 'Your cart is empty. Please add some items before checking out.');
-            }
-
-            $subtotal = $this->cartService->getCartTotal();
-            $delivery = 10.00; // Example delivery fee
-            $discount = session()->get('discount', 0);
-            $total = $subtotal + $delivery - $discount;
-
-            // Set user_id if authenticated, null if guest
-            $user_id = auth()->check() ? auth()->id() : null;
-
-            // Only update user data if authenticated
+            // Update user data if authenticated
             if (auth()->check()) {
-                $user = auth()->user();
-                $userUpdates = [];
-
-                if (empty($user->first_name)) {
-                    $userUpdates['first_name'] = $request->firstname;
-                }
-                if (empty($user->last_name)) {
-                    $userUpdates['last_name'] = $request->lastname;
-                }
-                if (empty($user->phone)) {
-                    $userUpdates['phone'] = $request->phone;
-                }
-                if (empty($user->country)) {
-                    $userUpdates['country'] = $request->country;
-                }
-                if (empty($user->street_address)) {
-                    $userUpdates['street_address'] = $request->street_address;
-                }
-                if (empty($user->apartment)) {
-                    $userUpdates['apartment'] = $request->apartment;
-                }
-                if (empty($user->city)) {
-                    $userUpdates['city'] = $request->city;
-                }
-                if (empty($user->postcode)) {
-                    $userUpdates['postcode'] = $request->postcode;
-                }
-
-                // Only update if there are empty fields
-                if (!empty($userUpdates)) {
-                    $user->update($userUpdates);
-                }
+                $this->orderService->updateUserData(auth()->user(), $request->all());
             }
-
-            // Create invoice with user_id if authenticated, null if guest
-            $invoice = CustomerInvoice::create([
-                'user_id' => $user_id,
-                'invoice_number' => 'INV-' . Str::random(10),
-                'subtotal' => $subtotal,
-                'delivery' => $delivery,
-                'discount' => $discount,
-                'total' => $total,
-                'first_name' => $request->firstname,
-                'last_name' => $request->lastname,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'country' => $request->country,
-                'street_address' => $request->street_address,
-                'apartment' => $request->apartment,
-                'city' => $request->city,
-                'postcode' => $request->postcode,
-                'payment_method' => $request->payment_method,
-                'status' => 'pending'
-            ]);
-
-            // Create invoice details
-            foreach ($cartItems as $item) {
-                CustomerInvoiceDetail::create([
-                    'invoice_id' => $invoice->id,
-                    'product_id' => $item->product->id,
-                    'quantity' => $item->quantity,
-                    'unit_price' => $item->price,
-                    'total_price' => $item->price * $item->quantity
-                ]);
-            }
-
-            // Clear cart using CartService
-            $this->cartService->clearCart();
-
-            // Clear any discount
-            session()->forget('discount');
-
-            DB::commit();
 
             return redirect()->route('order.confirmation', ['invoice' => $invoice->invoice_number])
                            ->with('success', 'Order placed successfully!');
 
         } catch (\Exception $e) {
-            DB::rollBack();
-            \Log::error('Order Processing Error:', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
             return back()->with('error', 'There was an error processing your order. Please try again.');
         }
     }
 
     public function confirmation($invoice)
     {
-        // Redirect to home if no invoice number provided
         if (!$invoice) {
             return redirect()->route('home');
         }
 
-        $query = CustomerInvoice::with(['details.product'])
-            ->where('invoice_number', $invoice);
-
-        // If user is authenticated, only show their orders
-        if (auth()->check()) {
-            $query->where('user_id', auth()->id());
-        } 
-        else 
-        {
-            // For guests, only show orders from the current session
-            $query->whereNull('user_id');
-        }
-
-        // If no matching invoice is found, redirect to home
-        $invoice = $query->first();
+        $invoice = $this->orderService->getOrderConfirmation($invoice);
         if (!$invoice) {
             return redirect()->route('home');
         }

@@ -80,15 +80,6 @@
                         </div>
                     </form>
 
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible" role="alert">
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            <div class="alert-message">
-                                {{ session('success') }}
-                            </div>
-                        </div>
-                    @endif
-
                     <table class="table table-striped">
                         <thead>
                             <tr>

@@ -16,8 +16,8 @@
     <section class="ftco-section">
       <div class="container">
         @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
+            <div class="mb-3">
+                <span class="badge bg-danger">{{ session('error') }}</span>
             </div>
         @endif
         
