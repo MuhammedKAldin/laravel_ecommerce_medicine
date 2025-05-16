@@ -118,8 +118,7 @@ national-care/
 ### Product Management
 - Complete CRUD operations for products
 - Product logging system
-- Image handling and storage
-- Inventory management
+- Image handling and filtering
 
 ### Orders Management
 - CRUD operations of "customer_invoices_details" created by the User which is the Items Added to the Invoice  
