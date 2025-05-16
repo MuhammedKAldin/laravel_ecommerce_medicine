@@ -35,6 +35,10 @@
         .sidebar-item.active i {
             color: #3b7ddd;
         }
+		
+		.badge {
+		color: white;
+		}
     </style>
 </head>
 

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Services\OrderService;
 use App\Services\CartService;
+use App\Enums\PaymentMethod;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 
 class OrderController extends Controller
 {
@@ -42,7 +44,7 @@ class OrderController extends Controller
                 'regex:/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,8}$/'
             ],
             'email' => 'required|email|max:255',
-            'payment_method' => 'required|in:bank_transfer,check,paypal',
+            'payment_method' => ['required', new Enum(PaymentMethod::class)],
             'terms' => 'required|accepted'
         ], [
             'firstname.regex' => 'First name can only contain letters, spaces, hyphens and apostrophes',
@@ -53,6 +55,7 @@ class OrderController extends Controller
             'postcode.regex' => 'Invalid postcode format',
             'phone.regex' => 'Please enter a valid phone number',
             'phone.min' => 'Phone number must be at least 6 digits long',
+            'payment_method' => 'Please select a valid payment method'
         ]);
 
         try {

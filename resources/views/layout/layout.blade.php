@@ -27,6 +27,13 @@
     <link rel="stylesheet" href="{{ asset('css/flaticon.css') }}">
     <link rel="stylesheet" href="{{ asset('css/icomoon.css') }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    <style>
+      .badge {
+       color: white;
+      }
+    </style>
+
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -64,6 +71,7 @@
 	        <ul class="navbar-nav ml-auto">
 	          <li class="nav-item active"><a href="{{route('home')}}" class="nav-link">Home</a></li>
 	          <li class="nav-item"><a href="{{route('products')}}" class="nav-link">Products</a></li>
+	          <li class="nav-item"><a href="{{route('cart')}}" class="nav-link">Cart</a></li>
             @auth
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}</a>
@@ -73,6 +81,7 @@
                 @endif
                 <a class="dropdown-item" href="{{ route('profile.edit') }}"> Profile</a>
                 <a class="dropdown-item" href="{{ route('orders') }}"> Orders</a>
+                <a class="dropdown-item" href="{{ route('cart') }}"> Cart</a>
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

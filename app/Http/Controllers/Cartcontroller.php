@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\CartItem;
 use App\Services\CartService;
+use App\Enums\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -92,7 +93,9 @@ class CartController extends Controller
         $delivery = 0.00;
         $discount = 0.00;
         
-        return view('checkout', compact('cartItems', 'total', 'user', 'subtotal', 'delivery', 'discount'));
+        $paymentMethods = PaymentMethod::cases();
+        
+        return view('checkout', compact('cartItems', 'total', 'user', 'subtotal', 'delivery', 'discount', 'paymentMethods'));
     }
 
     public function orderConfirmation()

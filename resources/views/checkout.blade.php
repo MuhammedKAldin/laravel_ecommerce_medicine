@@ -194,35 +194,23 @@
 	          				<h3 class="billing-heading mb-4">Payment Method</h3>
 							<div class="form-group">
 								<div class="col-md-12 @error('payment_method') is-invalid @enderror">
+									@foreach($paymentMethods as $method)
 									<div class="radio">
 										@if(isset($user))
-											<label><input type="radio" name="payment_method" value="bank_transfer" {{ old('payment_method', $user->payment_method) == 'bank_transfer' ? 'checked' : '' }}> Direct Bank Transfer</label>
+											<label>
+												<input type="radio" name="payment_method" value="{{ $method->value }}" 
+													{{ old('payment_method', $user->payment_method) == $method->value ? 'checked' : '' }}> 
+												{{ ucwords(str_replace('_', ' ', $method->value)) }}
+											</label>
 										@else
-											<label><input type="radio" name="payment_method" value="bank_transfer" {{ old('payment_method') == 'bank_transfer' ? 'checked' : '' }}> Direct Bank Transfer</label>
+											<label>
+												<input type="radio" name="payment_method" value="{{ $method->value }}" 
+													{{ old('payment_method') == $method->value ? 'checked' : '' }}> 
+												{{ ucwords(str_replace('_', ' ', $method->value)) }}
+											</label>
 										@endif
 									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-md-12">
-									<div class="radio">
-										@if(isset($user))
-											<label><input type="radio" name="payment_method" value="check" {{ old('payment_method', $user->payment_method) == 'check' ? 'checked' : '' }}> Check Payment</label>
-										@else
-											<label><input type="radio" name="payment_method" value="check" {{ old('payment_method') == 'check' ? 'checked' : '' }}> Check Payment</label>
-										@endif
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-md-12">
-									<div class="radio">
-										@if(isset($user))
-											<label><input type="radio" name="payment_method" value="paypal" {{ old('payment_method', $user->payment_method) == 'paypal' ? 'checked' : '' }}> Paypal</label>
-										@else
-											<label><input type="radio" name="payment_method" value="paypal" {{ old('payment_method') == 'paypal' ? 'checked' : '' }}> Paypal</label>
-										@endif
-									</div>
+									@endforeach
 								</div>
 							</div>
                             @error('payment_method')
