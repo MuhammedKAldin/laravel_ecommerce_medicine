@@ -12,6 +12,11 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
+        // Download product images first
+        $this->command->info('Downloading product images...');
+        require_once base_path('download_images.php');
+        $this->command->info('Product images downloaded successfully!');
+
         // Get category IDs
         $categories = DB::table('categories')->get();
         

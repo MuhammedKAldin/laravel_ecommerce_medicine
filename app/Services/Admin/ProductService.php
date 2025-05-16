@@ -56,11 +56,7 @@ class ProductService
 
     public function deleteProduct(Product $product)
     {
-        // Delete the product image if it exists
-        if ($product->getRawOriginal('image')) {
-            Storage::disk('public')->delete($product->getRawOriginal('image'));
-        }
-
+        // Soft delete the product without deleting the image
         return $product->delete();
     }
 } 
