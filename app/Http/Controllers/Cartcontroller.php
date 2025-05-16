@@ -97,6 +97,6 @@ class CartController extends Controller
 
     public function orderConfirmation()
     {
-        return view('order-confirmation');
+        return redirect()->route('home');
     }
 }

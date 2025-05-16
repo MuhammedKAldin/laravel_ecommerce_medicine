@@ -168,6 +168,11 @@ class OrderController extends Controller
 
     public function confirmation($invoice)
     {
+        // Redirect to home if no invoice number provided
+        if (!$invoice) {
+            return redirect()->route('home');
+        }
+
         $query = CustomerInvoice::with(['details.product'])
             ->where('invoice_number', $invoice);
 
@@ -181,7 +186,11 @@ class OrderController extends Controller
             $query->whereNull('user_id');
         }
 
-        $invoice = $query->firstOrFail();
+        // If no matching invoice is found, redirect to home
+        $invoice = $query->first();
+        if (!$invoice) {
+            return redirect()->route('home');
+        }
 
         return view('order-confirmation', compact('invoice'));
     }

@@ -1,66 +1,165 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Medical E-commerce Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based e-commerce platform specialized for medical and healthcare products.
 
-## About Laravel
+ ## 🐱‍💻 Objective example
+    ```bash
+    Build a  mini medical e-commerce system  using  Laravel  + Blade + MySQL  , simulating a 
+    simplified version of our internal admin and customer platform. The focus is on functionality, 
+    structure, and code quality.
+    ``` 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+2. User account:
+   ```bash
+    emaIl : mohamed@gmail.com
+    password : password
+   ```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 👤 Accounts example
+1. Admin account:
+   ```bash
+    emaIl : admin@gmail.com
+    password : password
+   ```
+2. User account:
+   ```bash
+    emaIl : mohamed@gmail.com
+    password : password
+   ```
+## 💻 Technology Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Backend Framework**: Laravel
+- **Frontend**: 
+  - Blade templating
+  - TailwindCSS
+  - Bootstrap
+  - JavaScript
+- **Database**: MySQL
 
-## Learning Laravel
+## 🚀 Getting Started
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. Clone the repository
+2. Install PHP dependencies:
+   ```bash
+   composer install
+   ```
+3. Install Node dependencies:
+   ```bash
+   npm install
+   ```
+4. Configure your environment:
+   - Copy `.env.example` to `.env`
+   - Configure your database settings
+   
+5. Run migrations:
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+6. Start the development server:
+   ```bash
+   php artisan serve
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+7. Compile assets:
+   ```bash
+   npm run dev
+   ```
 
-## Laravel Sponsors
+## 🏗 Project Structure
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Admin Directories
+```
+national-care/
+├── app/                    
+│   ├── Http/Controllers/admin # Controllers for Admin logic
+├── resources/
+│   ├── views/admin            # Blade templates for Admin page
+├── public/admin              # Publicly accessible files for Admin page
+```
 
-### Premium Partners
+```
+national-care/
+├── app/                    # Core application code
+│   ├── Http/              # Controllers, Middleware, Requests
+│   ├── Models/            # Eloquent models
+│   ├── Services/          # Business logic services
+│   ├── Observers/         # Model observers
+│   ├── Events/            # Event classes
+│   ├── Listeners/         # Event listeners
+│   └── Providers/         # Service providers
+├── routes/                # Application routes
+│   ├── web.php           # Web routes
+│   └── auth.php          # Authentication routes
+├── resources/            # Frontend resources
+│   ├── views/            # Blade templates
+│   ├── js/              # JavaScript files
+│   └── css/             # CSS/SCSS files
+├── public/              # Publicly accessible files
+├── database/            # Database migrations and seeders
+├── config/             # Configuration files
+├── storage/            # Application storage
+└── tests/              # Test files
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## 🔑 Key Components
 
-## Contributing
+### Authentication & Authorization
+- Laravel Breeze for authentication system
+- Admin middleware for administrative access control
+- Role-based access control (User/Admin) via Boolean check "is_admin" in User model
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### User Management
+- User profiles with address and contact information
+- Order history
+- Dashboard for both users and administrators
 
-## Code of Conduct
+### Product Management
+- Complete CRUD operations for products
+- Product logging system
+- Image handling and storage
+- Inventory management
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Orders Management
+- CRUD operations of "customer_invoices_details" created by the User which is the Items Added to the Invoice  
+- Update status of "customer_invoice"
+- Display User's information created the "customer_invoice"
+- Invoice is accessable by Auth/Guest users with the link corresponding to the Invoice code
 
-## Security Vulnerabilities
+### Shopping System
+- Shopping cart functionality
+- Checkout process
+- Order Confirmation and Invoice generation and handling
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🛣 Route Structure
 
-## License
+### Public Routes
+- Home page: `/`
+- Products listing: `/products`
+- Single product: `/products/{id}`
+- Cart management: `/cart`
+- Checkout: `/checkout`
+- Order confirmation: `/order-confirmation`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Authenticated User Routes
+- User dashboard: `/dashboard`
+- Profile management: `/profile`
+- Order history: `/orders`
+
+### Admin Routes (Requires Auth & Admin)
+- Admin dashboard: `/admin/dashboard`
+- Product management: `/admin/products`
+- Product logs: `/admin/products/logs`
+- Invoice management: `/admin/invoices`
+
+## 🔧 Development Guidelines
+
+### Code Organization
+- Controllers should be thin and delegate business logic to Services
+- Use Models for database interactions
+- Implement Observers for model events
+- Maintain Folder Structure that aligns with routing functionality
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
