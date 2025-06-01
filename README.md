@@ -23,6 +23,10 @@ A Laravel-based e-commerce platform specialized for medical and healthcare produ
   - JavaScript
 - **Database**: MySQL
 
+## 🚚 Delivery Options 
+- Cash On Delivery (COD)
+- Pay with Visa (currently left as an option only, without actual implementation for the test)
+
 ## 🚀 Getting Started
 
 1. Clone the repository
