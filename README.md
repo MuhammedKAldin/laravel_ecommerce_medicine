@@ -2,20 +2,6 @@
 
 A Laravel-based e-commerce platform specialized for medical and healthcare products.
 
- ## 🐱‍💻 Objective example
- 
-    ```
-    Build a  mini medical e-commerce system  using  Laravel  + Blade + MySQL  , simulating a 
-    simplified version of our internal admin and customer platform. The focus is on functionality, 
-    structure, and code quality.
-    ``` 
-
-2. User account:
-   ```bash
-    emaIl : mohamed@gmail.com
-    password : password
-   ```
-
 ## 👤 Accounts example
 1. Admin account:
    ```bash
