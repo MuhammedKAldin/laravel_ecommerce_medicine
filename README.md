@@ -2,6 +2,12 @@
 
 A Laravel-based e-commerce platform specialized for medical and healthcare products.
 
+# Summary 
+1. Guest Checkout: Users can place orders without registration. After selecting items, they provide their name, address, phone number, and choose a delivery option. Upon submission, an order confirmation page displays a receipt and confirmation code.
+
+2. Admin Panel: Admins can manage product listings — create, update, and delete items to keep the storefront up to date.
+
+
 ## 👤 Accounts example
 1. Admin account:
    ```bash
